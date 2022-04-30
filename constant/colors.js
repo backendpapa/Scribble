@@ -1,15 +1,12 @@
 
-const light={
-    primary:"#0D0140",
-    secondary:"#5b5b5b" 
-}
 
-const dark={
-    primary:"#5b5b5b",
-    secondary:"#0D0140" 
-}
+
 module.exports={
-    light,
-    dark
+    primary:"#ffffff",
+    secondary:"#5b5b5b" ,
+    tertiary:"#010101",
+    mega:"#fefefe",
+    sur:"#f6f6f6",
+    mis:"#d9d9d9"
    
 }
