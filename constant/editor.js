@@ -1,8 +1,8 @@
 import { fonts } from "../../../constant";
 
 function getContentCSS() {
-    /*img {max-width: 98%;margin-left:auto;margin-right:auto;display: block;}*/
-    return `
+  /*img {max-width: 98%;margin-left:auto;margin-right:auto;display: block;}*/
+  return `
     <style>
         video {max-width: 98%;margin-left:auto;margin-right:auto;display: block;}
         img {max-width: 98%;vertical-align: middle;}
@@ -21,30 +21,30 @@ function getContentCSS() {
 }
 
 function createHTML(options = {}) {
-    const {
-        backgroundColor = '#FFF',
-        color = '#000033',
-        caretColor = '',
-        placeholderColor = '#a9a9a9',
-        contentCSSText = '',
-        cssText = '',
-        initialCSSText = '',
-        pasteAsPlainText = false,
-        pasteListener = false,
-        keyDownListener = false,
-        keyUpListener = false,
-        inputListener = false,
-        autoCapitalize = 'off',
-        enterKeyHint = '',
-        autoCorrect = false,
-        defaultParagraphSeparator = 'div',
-        
-        // When first gaining focus, the cursor moves to the end of the text
-        firstFocusEnd = true,
-        useContainer = true,
-    } = options;
-    //ERROR: HTML height not 100%;
-    return `
+  const {
+    backgroundColor = '#FFF',
+    color = '#000033',
+    caretColor = '',
+    placeholderColor = '#a9a9a9',
+    contentCSSText = '',
+    cssText = '',
+    initialCSSText = '',
+    pasteAsPlainText = false,
+    pasteListener = false,
+    keyDownListener = false,
+    keyUpListener = false,
+    inputListener = false,
+    autoCapitalize = 'off',
+    enterKeyHint = '',
+    autoCorrect = false,
+    defaultParagraphSeparator = 'div',
+
+    // When first gaining focus, the cursor moves to the end of the text
+    firstFocusEnd = true,
+    useContainer = true,
+  } = options;
+  //ERROR: HTML height not 100%;
+  return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -57,7 +57,7 @@ function createHTML(options = {}) {
         html, body { margin: 0; padding: 0;font-family: 'DM Sans', sans-serif; font-size:1em; height: 100%}
         body { overflow-y: hidden; -webkit-overflow-scrolling: touch;background-color: ${backgroundColor};caret-color: ${caretColor};}
         .content {font-family:'DM Sans', sans-serif;color: ${color}; width: 100%;${!useContainer ? 'height:100%;' : ''}-webkit-overflow-scrolling: touch;padding-left: 0;padding-right: 0;}
-        .pell { height: 100%;} .pell-content { outline: 0; overflow-y: auto;padding: 10px;height: 100%;${contentCSSText}}
+        .pell { height: 100%;} .pell-content { outline: 0; overflow-y: auto;height: 100%;${contentCSSText}}
     </style>
     <style>
         [placeholder]:empty:before { content: attr(placeholder); color: ${placeholderColor};}
