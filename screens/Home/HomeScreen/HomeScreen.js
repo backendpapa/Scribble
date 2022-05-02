@@ -1,13 +1,16 @@
+import { useNavigation } from "@react-navigation/core";
 import { Icon } from "@rneui/base";
 import React from "react";
 import {View,Text, StatusBar,useColorScheme, ScrollView,StyleSheet, TouchableOpacity} from 'react-native'
 import { colors, fonts, sizes } from "../../../constant";
 
+
 import {HomeHeader,HomeTab,HomeContent} from '../components/index'
 
 
-function Home({navigation}){
+function Home(){
     const theme=useColorScheme();
+    const navigation=useNavigation()
     const style=styles
   
     return(
@@ -23,7 +26,9 @@ function Home({navigation}){
                    </View>
                 </View>
                 <View style={{position:'absolute',right:20,bottom:90}}>
-                   <TouchableOpacity style={[style.new_note_button,{backgroundColor:theme=="dark"?colors.primary:colors.tertiary}]} activeOpacity={0.8}>
+                   <TouchableOpacity onPress={
+                       ()=>{navigation.navigate("NewNote")}
+                   } style={[style.new_note_button,{backgroundColor:theme=="dark"?colors.primary:colors.tertiary}]} activeOpacity={0.8}>
                    <Icon size={50} color={theme=="dark"?colors.secondary:colors.primary}  name="add"  type="ionicons"  />
                    </TouchableOpacity>
                 </View>
