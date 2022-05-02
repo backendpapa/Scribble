@@ -1313,6 +1313,7 @@
     "react-native-size-matters" "^0.4.0"
 
 "@rneui/themed@github:react-native-elements/react-native-elements#themed":
+  "integrity" "sha512-GgbCgLs24iHW3JXxqj7FwHI3xPCWeyC024wKKfS8/OctX9z5DwNzv9f675S9t9ZAj2aSyVN/38g6cxKjExpElA=="
   "resolved" "git+ssh://git@github.com/react-native-elements/react-native-elements.git#640e9aea36250df97d518298bf07cf9eb1cb168e"
   "version" "4.0.0-rc.2"
 
@@ -5766,6 +5767,13 @@
   "integrity" "sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w=="
   "resolved" "https://registry.npmjs.org/react-is/-/react-is-17.0.2.tgz"
   "version" "17.0.2"
+
+"react-native-awesome-alerts@^1.5.2":
+  "integrity" "sha512-PPTzKLpwDKbjeghvrRkg7OunND4C7d4bQORVLBnhqUK2z2PfZiI3UCULU0tczzeOyavv5hVSrYNXKPXlvhfmVg=="
+  "resolved" "https://registry.npmjs.org/react-native-awesome-alerts/-/react-native-awesome-alerts-1.5.2.tgz"
+  "version" "1.5.2"
+  dependencies:
+    "prop-types" "^15.7.2"
 
 "react-native-codegen@^0.0.13":
   "integrity" "sha512-rCh1P+s0Q4N6vNgS97ckafbhJRztz22+0l0VZoyQC06F07J98kI5cUByH0ATypPRIdpkMbAZc59DoPdDFc01bg=="

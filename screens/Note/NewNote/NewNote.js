@@ -1,6 +1,7 @@
-import {Icon} from '@rneui/base';
-import React, {useRef, useCallback} from 'react';
+import { CheckBox, Icon } from "@rneui/base";
 
+import React, {useRef, useCallback} from 'react';
+import AwesomeAlert from 'react-native-awesome-alerts';
 import {
   View,
   Text,
@@ -9,8 +10,8 @@ import {
   TextInput,
   TouchableOpacity,
   useColorScheme,
-  AsyncStorage
-} from 'react-native';
+  AsyncStorage, Alert,
+} from "react-native";
 import {
   RichEditor,
   RichToolbar,
@@ -18,24 +19,49 @@ import {
   getContentCSS,
 } from 'react-native-pell-rich-editor';
 import {colors, fonts, sizes} from '../../../constant';
+import { useNavigation } from "@react-navigation/core";
+let labels=["Design","Wireframe","UX"]
 
 function NewNote() {
   const [richtext, setRichtext] = React.useState('');
   const [note, setNote] = React.useState('');
   const [title,setTitle]=React.useState("hELLO")
   const editorRef = useRef(null);
-
+  const [showAlert,setShowAlert]=React.useState(false)
   const theme = useColorScheme();
+  const navigation = useNavigation()
 
   const style = styles;
 
+  const alertContent=()=>{
+    return (
+      <View>
+        <View>
+          <View style={{display:'flex',flexDirection:'row',justifyContent:'center'}}>{labels.map((item,i)=>{
+            return (<View style={{display:'flex',flexDirection:'row',justifyContent:'center',alignItems
+            :"center"}}>
+              <CheckBox  checkedIcon='dot-circle-o'
+                         uncheckedIcon='circle-o'  checked={ true} size={20} />
+              <Text style={{marginLeft:-15}}> {item}</Text>
+            </View>)
+          })}</View>
+        </View>
+      </View>
+    )
+  }
+
   let saveNote = async () => {
-    console.log(note)
-    console.log(title)
-    await AsyncStorage.setItem(title,note,(e)=>{
-      console.log(e,"error")
-    })
-    console.log(await AsyncStorage.getItem(title),"result");
+    if(title.length>0){
+      console.log(note)
+      console.log(title)
+      await AsyncStorage.setItem(title,note,(e)=>{
+        console.log(e,"error")
+      })
+      console.log(await AsyncStorage.getItem(title),"result");
+      navigation.navigate("Home")
+    }else{
+      Alert.alert('','You cannot save a note without a title')
+    }
   };
   let handleChange = useCallback(html => {
     // save html to content ref;
@@ -87,7 +113,9 @@ function NewNote() {
             flexDirection: 'row',
             alignItems: 'center',
           }}>
-          <TouchableOpacity activeOpacity={0.8}>
+          <TouchableOpacity onPress={()=>{
+            navigation.navigate("Home")
+          }} activeOpacity={0.8}>
             <Icon
               color={theme == 'dark' ? colors.mega : colors.tertiary}
               name="close-circle-outline"
@@ -118,6 +146,8 @@ function NewNote() {
             fontSize: sizes.h18,
             color: theme == 'dark' ? colors.mega : colors.tertiary,
           }}
+          onChangeText={setTitle}
+          value={title}
           placeholderTextColor={theme == 'dark' ? colors.secondary : colors.mis}
           placeholder={'Title...'}
         />
@@ -143,7 +173,9 @@ function NewNote() {
           </View>
           <View>
             {/*  View to edit labels*/}
-            <TouchableOpacity activeOpacity={0.8}>
+            <TouchableOpacity onPress={()=>{
+              setShowAlert(true)
+            }} activeOpacity={0.8}>
               <Text
                 style={{
                   color: theme == 'dark' ? colors.primary : colors.tertiary,
@@ -154,6 +186,23 @@ function NewNote() {
             </TouchableOpacity>
           </View>
         </View>
+        <AwesomeAlert
+        show={showAlert}
+
+        closeOnTouchOutside={false}
+        closeOnHardwareBackPress={false}
+        showCancelButton={true}
+        showConfirmButton={true}
+        onCancelPressed={()=>{
+          setShowAlert(false)
+        }}
+        onConfirmPressed={()=>{
+          setShowAlert(false)
+        }}
+
+        customView={alertContent()}
+
+        />
 
         <ScrollView
           showsHorizontalScrollIndicator={false}

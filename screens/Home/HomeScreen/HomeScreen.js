@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/core';
 import {Icon} from '@rneui/base';
-import React from 'react';
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -20,7 +20,13 @@ function Home() {
   const navigation = useNavigation();
   const style = styles;
 
+  useEffect(()=>{
+    async function myEffect(){
+      console.log(await AsyncStorage.getAllKeys());
+    }
+    myEffect();
 
+  },[])
 
   return (
     <View>
