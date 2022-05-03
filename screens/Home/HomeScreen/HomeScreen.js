@@ -1,7 +1,6 @@
 import {useNavigation} from '@react-navigation/core';
 import {Icon} from '@rneui/base';
-import JSON5 from 'json5'
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -10,61 +9,43 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-
 } from 'react-native';
-
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {useIsFocused, useRoute} from '@react-navigation/native';
+import {useSelector, useDispatch} from 'react-redux';
+import {
+  getAllNotes,
+  SET_NEW_NOTE,
+} from '../../../dataStore/redux/action/actions';
+import {db} from '../../../dataStore/Config';
+import {HomeHeader, HomeTab, HomeContent, CardNote} from '../components/index';
 import {colors, fonts, sizes} from '../../../constant';
 
-
-import { HomeHeader, HomeTab, HomeContent, CardNote } from "../components/index";
-import asyncStorage from "@react-native-async-storage/async-storage/src/AsyncStorage";
-import { useIsFocused, useRoute } from "@react-navigation/native";
-import {useSelector,useDispatch} from "react-redux";
-import { getAllNotes, SET_NEW_NOTE } from "../../../dataStore/redux/action/actions";
-import { db } from "../../../dataStore/Config";
-
-
-
 function Home() {
-
   const theme = useColorScheme();
   const navigation = useNavigation();
-  const routes=useRoute()
-  const isFocused=useIsFocused();
-  const [loading,setLoading]=useState(true)
+  const routes = useRoute();
+  const isFocused = useIsFocused();
+  const [loading, setLoading] = useState(true);
   const style = styles;
+  const {note} = useSelector(state => state);
+  const dispatch = useDispatch();
+  const [notearray, setNoteArray] = useState(note.notes);
 
-  const { note }  = useSelector((state) => state)
-  const dispatch=useDispatch()
-  // console.log(note,"note")
-  const [notearray,setNoteArray]=useState(note.notes)
-  console.log(notearray,"arr")
+  useEffect(() => {
+    if (loading == true && notearray.length == 0) {
+      db.find({}, function (err, res) {
+        console.log(res);
 
+        dispatch(getAllNotes(res));
 
-useEffect(()=>{
-  if(loading==true && notearray.length==0){
-    console.log("array emty")
-    db.find({},function(err,res){
-      console.log(res)
-
-      dispatch((getAllNotes(res)))
-
-      setNoteArray(oldn=>[...res])
-      console.log(notearray,"notearr")
-      setLoading(false)
-    })
-  }else{
-    console.log("array not emty")
-    setNoteArray(note.notes)
-    setLoading(false)
-
-  }
-})
-
-
-
-
+        setNoteArray(oldn => [...res]);
+        setLoading(false);
+      });
+    } else {
+      setNoteArray(note.notes);
+      setLoading(false);
+    }
+  });
 
   return (
     <View>
@@ -82,19 +63,15 @@ useEffect(()=>{
           <HomeTab />
         </View>
         <View style={{marginTop: 10, height: '100%'}}>
-          {loading==false?(  <View style={{height:'70%',display:'flex',justifyContent:'center'}}>
-            <ScrollView showsVerticalScrollIndicator={false} >
-              { notearray.map((item,i)=>{
-                return  <CardNote key={i}   title={item.title} bg={item.bg_color}  note={item.note}  />
-              })}
-            </ScrollView>
-          </View>):(<View></View>)}
+          {loading == false ? ( <HomeContent notes={{notearray}} />
+          ) : (
+            <View></View>
+          )}
         </View>
       </View>
       <View style={{position: 'absolute', right: 20, bottom: 90}}>
         <TouchableOpacity
           onPress={() => {
-
             navigation.navigate('NewNote');
           }}
           style={[

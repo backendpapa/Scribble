@@ -85,20 +85,23 @@ function NewNote() {
     );
   };
 
-  let saveNote =  () => {
+  let saveNote = () => {
     if (title.length > 0) {
-      console.log(noteContent);
-      console.log(title);
-
-
       try {
-        console.log("callled")
-         dispatch(setNewNote({note: noteContent, title: title,label:"Design | Wireframe",data_modified:"2022/04/30",bg_color:"#fff6e7"||"#eff5fb"||"#e4ffe6"}));
-        console.log("callled after")
-        console.log( note,"note");
-         navigation.navigate('Home');
+        dispatch(
+          setNewNote({
+            note: noteContent,
+            title: title,
+            label: 'Design | Wireframe',
+            data_modified: '2022/04/30',
+            bg_color: '#fff6e7' || '#eff5fb' || '#e4ffe6',
+          }),
+        );
+
+        navigation.navigate('Home');
       } catch (e) {
         // saving error
+        alert.alert('', 'You note was not saved!');
       }
     } else {
       Alert.alert('', 'You cannot save a note without a title');

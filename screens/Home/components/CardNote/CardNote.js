@@ -21,7 +21,7 @@ function CardNote(props){
     return (
         <View>
            <TouchableOpacity  activeOpacity={0.8}>
-           <View style={[style.containerM,{backgroundColor:item.bg}]}>
+           <View style={[style.containerM,{backgroundColor:item.bg,borderRadius:15}]}>
                     <Text style={[style.title_text,{color:colors.tertiary}]}>{item.title}</Text>
                     {props.content==""?(<View></View>):(<Text style={[style.content_text,{color:colors.tertiary}]}>{item.note}</Text>)}
                     <View style={{display:'flex',flexDirection:'row',justifyContent:'space-between',marginTop:15,alignItems:'center'}}>
@@ -45,7 +45,6 @@ const styles=StyleSheet.create({
         minHeight:110,
         maxHeight:220,
         padding:15,
-        borderRadius:15,
         marginBottom:20
     },
     title_text:{
