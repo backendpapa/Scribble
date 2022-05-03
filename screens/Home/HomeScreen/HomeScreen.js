@@ -32,25 +32,35 @@ function Home() {
   const navigation = useNavigation();
   const routes=useRoute()
   const isFocused=useIsFocused();
-  const [loading,setLoading]=useState(false)
+  const [loading,setLoading]=useState(true)
   const style = styles;
 
   const { note }  = useSelector((state) => state)
   const dispatch=useDispatch()
-  console.log(note,"note")
+  // console.log(note,"note")
   const [notearray,setNoteArray]=useState(note.notes)
   console.log(notearray,"arr")
 
 
-// useEffect(()=>{
-//   db.find({},function(err,result){
-//     setNoteArray(result)
-//     setLoading(false)
-//   })
-//
-//
-//
-// })
+useEffect(()=>{
+  if(loading==true && notearray.length==0){
+    console.log("array emty")
+    db.find({},function(err,res){
+      console.log(res)
+
+      dispatch((getAllNotes(res)))
+
+      setNoteArray(oldn=>[...res])
+      console.log(notearray,"notearr")
+      setLoading(false)
+    })
+  }else{
+    console.log("array not emty")
+    setNoteArray(note.notes)
+    setLoading(false)
+
+  }
+})
 
 
 
@@ -72,8 +82,8 @@ function Home() {
           <HomeTab />
         </View>
         <View style={{marginTop: 10, height: '100%'}}>
-          {loading==false?(  <View style={{height:'88%',display:'flex',justifyContent:'center'}}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+          {loading==false?(  <View style={{height:'70%',display:'flex',justifyContent:'center'}}>
+            <ScrollView showsVerticalScrollIndicator={false} >
               { notearray.map((item,i)=>{
                 return  <CardNote key={i}   title={item.title} bg={item.bg_color}  note={item.note}  />
               })}
@@ -84,6 +94,7 @@ function Home() {
       <View style={{position: 'absolute', right: 20, bottom: 90}}>
         <TouchableOpacity
           onPress={() => {
+
             navigation.navigate('NewNote');
           }}
           style={[

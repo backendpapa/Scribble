@@ -1,4 +1,4 @@
-import { GET_ALL_NOTE, SET_NEW_NOTE } from "../action/actions";
+import {GET_ALL_NOTE, SET_NEW_NOTE} from '../action/actions';
 import Datastore from 'react-native-local-mongodb';
 import AsyncStorage from '@react-native-async-storage/async-storage/src/AsyncStorage';
 
@@ -10,12 +10,16 @@ let db = new Datastore({
 
 const initialState = {
   notes: [
-    {title:"How To Draw A Professional Wireframe?",note:"Lorem ipsum dolor sit, amet consectetur adipisicing elit. Hic, quod. Inventore omnis voluptatem eaque error repudiandae voluptate odit est veritatis, sequi quo, facilis natus fugit blanditiis.",label:"Design | Wireframe",data_modified:"2022/04/30",bg_color:"#eff5fb"},
-
+    // {
+    //   title: 'How To Draw A Professional Wireframe?',
+    //   note: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Hic, quod. Inventore omnis voluptatem eaque error repudiandae voluptate odit est veritatis, sequi quo, facilis natus fugit blanditiis.',
+    //   label: 'Design | Wireframe',
+    //   data_modified: '2022/04/30',
+    //   bg_color: '#eff5fb',
+    // },
   ],
   age: 10,
 };
-
 
 export const noteReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -27,15 +31,14 @@ export const noteReducer = (state = initialState, action) => {
       });
       return state;
     case GET_ALL_NOTE:
-      console.log(action.payload,"action")
-      state.notes=action.payload
-      console.log(state.notes,"newsta")
+      state.notes = action.payload;
+      console.log(state, 'new state');
       return state;
 
     default:
-      console.log(state,"state")
-      return state;
+      // console.log(state, 'state');
 
+      return state;
   }
 };
 
