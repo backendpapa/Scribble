@@ -1,8 +1,9 @@
 import {CheckBox, Icon} from '@rneui/base';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useRef, useCallback} from 'react';
-import uuid from 'react-native-uuid'
+import uuid from 'react-native-uuid';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import {addNote, loadNotes, notesDB} from '../../../dataStore/Config';
 import {
   View,
   Text,
@@ -11,7 +12,6 @@ import {
   TextInput,
   TouchableOpacity,
   useColorScheme,
-
   Alert,
 } from 'react-native';
 import {
@@ -21,20 +21,31 @@ import {
   getContentCSS,
 } from 'react-native-pell-rich-editor';
 
-import JSON5 from 'json5'
+import JSON5 from 'json5';
 import {colors, fonts, sizes} from '../../../constant';
 import {useNavigation} from '@react-navigation/core';
+import Datastore from 'react-native-local-mongodb';
+import {useDispatch, useSelector} from 'react-redux';
+import {setNewNote} from '../../../dataStore/redux/action/actions';
+
+let db = new Datastore({
+  filename: 'test4',
+  storage: AsyncStorage,
+  autoload: true,
+});
 
 let labels = ['Design', 'Wireframe', 'UX'];
 
 function NewNote() {
   const [richtext, setRichtext] = React.useState('');
-  const [note, setNote] = React.useState('');
-  const [title, setTitle] = React.useState('hELLO');
+  const [noteContent, setNote] = React.useState('');
+  const [title, setTitle] = React.useState('');
   const editorRef = useRef(null);
   const [showAlert, setShowAlert] = React.useState(false);
   const theme = useColorScheme();
+  const dispatch = useDispatch();
   const navigation = useNavigation();
+  const {note} = useSelector(state => state);
 
   const style = styles;
 
@@ -74,21 +85,21 @@ function NewNote() {
     );
   };
 
-  let saveNote = async () => {
+  let saveNote =  () => {
     if (title.length > 0) {
-      console.log(note);
+      console.log(noteContent);
       console.log(title);
-      let keygen=uuid.v4()
+
 
       try {
-        const jsonValue = JSON5.stringify({title,note})
-        await AsyncStorage.setItem(keygen, jsonValue)
+        console.log("callled")
+         dispatch(setNewNote({note: noteContent, title: title,label:"Design | Wireframe",data_modified:"2022/04/30",bg_color:"#fff6e7"||"#eff5fb"||"#e4ffe6"}));
+        console.log("callled after")
+        console.log( note,"note");
+         navigation.navigate('Home');
       } catch (e) {
         // saving error
       }
-
-      console.log(await AsyncStorage.getItem(keygen), 'result');
-      await navigation.navigate('Home');
     } else {
       Alert.alert('', 'You cannot save a note without a title');
     }
@@ -257,7 +268,7 @@ function NewNote() {
               onMessage={handleMessage}
               onFocus={handleFocus}
               onBlur={handleBlur}
-              initialContentHTML={note}
+              initialContentHTML={noteContent}
             />
           </View>
         </ScrollView>

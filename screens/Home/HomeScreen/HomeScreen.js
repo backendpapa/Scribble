@@ -17,42 +17,42 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {colors, fonts, sizes} from '../../../constant';
 
 
-import {HomeHeader, HomeTab, HomeContent} from '../components/index';
+import { HomeHeader, HomeTab, HomeContent, CardNote } from "../components/index";
 import asyncStorage from "@react-native-async-storage/async-storage/src/AsyncStorage";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useRoute } from "@react-navigation/native";
+import {useSelector,useDispatch} from "react-redux";
+import { getAllNotes, SET_NEW_NOTE } from "../../../dataStore/redux/action/actions";
+import { db } from "../../../dataStore/Config";
 
 
 
-let notes=[]
 function Home() {
 
   const theme = useColorScheme();
   const navigation = useNavigation();
+  const routes=useRoute()
   const isFocused=useIsFocused();
-  const [loading,setLoading]=useState(true)
+  const [loading,setLoading]=useState(false)
   const style = styles;
-  const [notearray,setNoteArray]=useState([])
-  useEffect(()=>{
-    async function mainEffect(){
-        if(loading==true){
-          notes=[]
-          let noteKeys=await AsyncStorage.getAllKeys();
-          console.log(await AsyncStorage.getAllKeys())
-          for(var i=0;i<noteKeys.length;i++){
 
-             await AsyncStorage.getItem(noteKeys[i]).then((token)=>{
-               notes.push(JSON5.parse(token.toString()))
-             })
+  const { note }  = useSelector((state) => state)
+  const dispatch=useDispatch()
+  console.log(note,"note")
+  const [notearray,setNoteArray]=useState(note.notes)
+  console.log(notearray,"arr")
 
-          }
-          console.log(await notes)
-        }
 
-        await setLoading(false)
+// useEffect(()=>{
+//   db.find({},function(err,result){
+//     setNoteArray(result)
+//     setLoading(false)
+//   })
+//
+//
+//
+// })
 
-    }
-    mainEffect()
-  },[loading])
+
 
 
 
@@ -72,7 +72,13 @@ function Home() {
           <HomeTab />
         </View>
         <View style={{marginTop: 10, height: '100%'}}>
-          {loading==false?( <HomeContent notes={notes}  />):(<View></View>)}
+          {loading==false?(  <View style={{height:'88%',display:'flex',justifyContent:'center'}}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              { notearray.map((item,i)=>{
+                return  <CardNote key={i}   title={item.title} bg={item.bg_color}  note={item.note}  />
+              })}
+            </ScrollView>
+          </View>):(<View></View>)}
         </View>
       </View>
       <View style={{position: 'absolute', right: 20, bottom: 90}}>

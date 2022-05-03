@@ -1,17 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { View,Text ,StyleSheet, TouchableOpacity} from "react-native";
 import { colors, fonts, sizes } from "../../../../constant";
+import { useIsFocused } from "@react-navigation/native";
 
 
 function CardNote(props){
+  const isFocused=useIsFocused()
+  const [item,setitem]=useState({})
     const style=styles
+
+  useEffect(()=>{
+    if(isFocused){
+  loadItem()
+    }
+  },[props,isFocused])
+  const loadItem=()=>{
+    setitem(props)
+  }
     return (
         <View>
-           <TouchableOpacity activeOpacity={0.8}>
-           <View style={[style.container,{backgroundColor:props.bg}]}>
-                    <Text style={[style.title_text,{color:colors.tertiary}]}>{props.title}</Text>
-                    {props.content==""?(<View></View>):(<Text style={[style.content_text,{color:colors.tertiary}]}>{props.content}</Text>)}
+           <TouchableOpacity  activeOpacity={0.8}>
+           <View style={[style.container,{backgroundColor:item.bg}]}>
+                    <Text style={[style.title_text,{color:colors.tertiary}]}>{item.title}</Text>
+                    {props.content==""?(<View></View>):(<Text style={[style.content_text,{color:colors.tertiary}]}>{item.note}</Text>)}
                     <View style={{display:'flex',flexDirection:'row',justifyContent:'space-between',marginTop:15,alignItems:'center'}}>
                         <View>
                             {/* Label section */}
@@ -45,7 +57,7 @@ const styles=StyleSheet.create({
         fontFamily:fonts.DmSans_Regular,
         fontSize:sizes.h13,
         marginTop:10,
-        
+
     },
     label_text:{
         fontFamily:fonts.DmSans_Bold,
