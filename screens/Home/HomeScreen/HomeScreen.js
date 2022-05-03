@@ -1,6 +1,7 @@
 import {useNavigation} from '@react-navigation/core';
 import {Icon} from '@rneui/base';
-import React, { useEffect } from "react";
+import JSON5 from 'json5'
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,24 +10,51 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  AsyncStorage,
+
 } from 'react-native';
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {colors, fonts, sizes} from '../../../constant';
 
-import {HomeHeader, HomeTab, HomeContent} from '../components/index';
 
+import {HomeHeader, HomeTab, HomeContent} from '../components/index';
+import asyncStorage from "@react-native-async-storage/async-storage/src/AsyncStorage";
+import { useIsFocused } from "@react-navigation/native";
+
+
+
+let notes=[]
 function Home() {
+
   const theme = useColorScheme();
   const navigation = useNavigation();
+  const isFocused=useIsFocused();
+  const [loading,setLoading]=useState(true)
   const style = styles;
-
+  const [notearray,setNoteArray]=useState([])
   useEffect(()=>{
-    async function myEffect(){
-      console.log(await AsyncStorage.getAllKeys());
-    }
-    myEffect();
+    async function mainEffect(){
+        if(loading==true){
+          notes=[]
+          let noteKeys=await AsyncStorage.getAllKeys();
+          console.log(await AsyncStorage.getAllKeys())
+          for(var i=0;i<noteKeys.length;i++){
 
-  },[])
+             await AsyncStorage.getItem(noteKeys[i]).then((token)=>{
+               notes.push(JSON5.parse(token.toString()))
+             })
+
+          }
+          console.log(await notes)
+        }
+
+        await setLoading(false)
+
+    }
+    mainEffect()
+  },[loading])
+
+
 
   return (
     <View>
@@ -44,7 +72,7 @@ function Home() {
           <HomeTab />
         </View>
         <View style={{marginTop: 10, height: '100%'}}>
-          <HomeContent />
+          {loading==false?( <HomeContent notes={notes}  />):(<View></View>)}
         </View>
       </View>
       <View style={{position: 'absolute', right: 20, bottom: 90}}>

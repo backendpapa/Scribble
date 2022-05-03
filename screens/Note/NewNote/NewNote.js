@@ -1,6 +1,7 @@
-import { CheckBox, Icon } from "@rneui/base";
-
+import {CheckBox, Icon} from '@rneui/base';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useRef, useCallback} from 'react';
+import uuid from 'react-native-uuid'
 import AwesomeAlert from 'react-native-awesome-alerts';
 import {
   View,
@@ -10,57 +11,86 @@ import {
   TextInput,
   TouchableOpacity,
   useColorScheme,
-  AsyncStorage, Alert,
-} from "react-native";
+
+  Alert,
+} from 'react-native';
 import {
   RichEditor,
   RichToolbar,
   actions,
   getContentCSS,
 } from 'react-native-pell-rich-editor';
+
+import JSON5 from 'json5'
 import {colors, fonts, sizes} from '../../../constant';
-import { useNavigation } from "@react-navigation/core";
-let labels=["Design","Wireframe","UX"]
+import {useNavigation} from '@react-navigation/core';
+
+let labels = ['Design', 'Wireframe', 'UX'];
 
 function NewNote() {
   const [richtext, setRichtext] = React.useState('');
   const [note, setNote] = React.useState('');
-  const [title,setTitle]=React.useState("hELLO")
+  const [title, setTitle] = React.useState('hELLO');
   const editorRef = useRef(null);
-  const [showAlert,setShowAlert]=React.useState(false)
+  const [showAlert, setShowAlert] = React.useState(false);
   const theme = useColorScheme();
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
   const style = styles;
 
-  const alertContent=()=>{
+  const alertContent = () => {
     return (
       <View>
         <View>
-          <View style={{display:'flex',flexDirection:'row',justifyContent:'center'}}>{labels.map((item,i)=>{
-            return (<View style={{display:'flex',flexDirection:'row',justifyContent:'center',alignItems
-            :"center"}}>
-              <CheckBox  checkedIcon='dot-circle-o'
-                         uncheckedIcon='circle-o'  checked={ true} size={20} />
-              <Text style={{marginLeft:-15}}> {item}</Text>
-            </View>)
-          })}</View>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+            }}>
+            {labels.map((item, i) => {
+              return (
+                <View
+                  key={i}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <CheckBox
+                    checkedIcon="dot-circle-o"
+                    uncheckedIcon="circle-o"
+                    checked={true}
+                    size={20}
+                  />
+                  <Text style={{marginLeft: -15}}> {item}</Text>
+                </View>
+              );
+            })}
+          </View>
         </View>
       </View>
-    )
-  }
+    );
+  };
 
   let saveNote = async () => {
-    if(title.length>0){
-      console.log(note)
-      console.log(title)
-      await AsyncStorage.setItem(title,note,(e)=>{
-        console.log(e,"error")
-      })
-      console.log(await AsyncStorage.getItem(title),"result");
-      navigation.navigate("Home")
-    }else{
-      Alert.alert('','You cannot save a note without a title')
+    if (title.length > 0) {
+      console.log(note);
+      console.log(title);
+      let keygen=uuid.v4()
+
+      try {
+        const jsonValue = JSON5.stringify({title,note})
+        await AsyncStorage.setItem(keygen, jsonValue)
+      } catch (e) {
+        // saving error
+      }
+
+      console.log(await AsyncStorage.getItem(keygen), 'result');
+      await navigation.navigate('Home');
+    } else {
+      Alert.alert('', 'You cannot save a note without a title');
     }
   };
   let handleChange = useCallback(html => {
@@ -113,9 +143,11 @@ function NewNote() {
             flexDirection: 'row',
             alignItems: 'center',
           }}>
-          <TouchableOpacity onPress={()=>{
-            navigation.navigate("Home")
-          }} activeOpacity={0.8}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Home');
+            }}
+            activeOpacity={0.8}>
             <Icon
               color={theme == 'dark' ? colors.mega : colors.tertiary}
               name="close-circle-outline"
@@ -173,9 +205,11 @@ function NewNote() {
           </View>
           <View>
             {/*  View to edit labels*/}
-            <TouchableOpacity onPress={()=>{
-              setShowAlert(true)
-            }} activeOpacity={0.8}>
+            <TouchableOpacity
+              onPress={() => {
+                setShowAlert(true);
+              }}
+              activeOpacity={0.8}>
               <Text
                 style={{
                   color: theme == 'dark' ? colors.primary : colors.tertiary,
@@ -187,21 +221,18 @@ function NewNote() {
           </View>
         </View>
         <AwesomeAlert
-        show={showAlert}
-
-        closeOnTouchOutside={false}
-        closeOnHardwareBackPress={false}
-        showCancelButton={true}
-        showConfirmButton={true}
-        onCancelPressed={()=>{
-          setShowAlert(false)
-        }}
-        onConfirmPressed={()=>{
-          setShowAlert(false)
-        }}
-
-        customView={alertContent()}
-
+          show={showAlert}
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={false}
+          showCancelButton={true}
+          showConfirmButton={true}
+          onCancelPressed={() => {
+            setShowAlert(false);
+          }}
+          onConfirmPressed={() => {
+            setShowAlert(false);
+          }}
+          customView={alertContent()}
         />
 
         <ScrollView
