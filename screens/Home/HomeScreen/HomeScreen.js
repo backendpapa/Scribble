@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/core';
 import {Icon} from '@rneui/base';
-import React, { useEffect } from "react";
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -9,24 +9,46 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  AsyncStorage,
 } from 'react-native';
+import {useIsFocused, useRoute} from '@react-navigation/native';
+import {useSelector, useDispatch} from 'react-redux';
+import {
+  getAllNotes,
+  SET_NEW_NOTE,
+} from '../../../dataStore/redux/action/actions';
+import {db} from '../../../dataStore/Config';
+import {HomeHeader, HomeTab, HomeContent, CardNote} from '../components/index';
 import {colors, fonts, sizes} from '../../../constant';
-
-import {HomeHeader, HomeTab, HomeContent} from '../components/index';
 
 function Home() {
   const theme = useColorScheme();
   const navigation = useNavigation();
+  const routes = useRoute();
+  const isFocused = useIsFocused();
+  const [loading, setLoading] = useState(true);
   const style = styles;
+  const {note} = useSelector(state => state);
+  const dispatch = useDispatch();
+  const [notearray, setNoteArray] = useState(note.notes);
 
-  useEffect(()=>{
-    async function myEffect(){
-      console.log(await AsyncStorage.getAllKeys());
+  useEffect(() => {
+
+    if (loading == true && notearray.length==1) {
+
+      db.find({}, function (err, res) {
+        console.log(res);
+
+        dispatch(getAllNotes(res));
+
+        setNoteArray(oldn => [...res]);
+        setLoading(false);
+      });
+    } else {
+
+      setNoteArray(note.notes);
+      setLoading(false);
     }
-    myEffect();
-
-  },[])
+  });
 
   return (
     <View>
@@ -44,7 +66,10 @@ function Home() {
           <HomeTab />
         </View>
         <View style={{marginTop: 10, height: '100%'}}>
-          <HomeContent />
+          {loading == false ? ( <HomeContent notes={{notearray}} />
+          ) : (
+            <View></View>
+          )}
         </View>
       </View>
       <View style={{position: 'absolute', right: 20, bottom: 90}}>

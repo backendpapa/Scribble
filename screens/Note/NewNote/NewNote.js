@@ -1,7 +1,9 @@
-import { CheckBox, Icon } from "@rneui/base";
-
+import {CheckBox, Icon} from '@rneui/base';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useRef, useCallback} from 'react';
+import uuid from 'react-native-uuid';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import {addNote, loadNotes, notesDB} from '../../../dataStore/Config';
 import {
   View,
   Text,
@@ -10,57 +12,120 @@ import {
   TextInput,
   TouchableOpacity,
   useColorScheme,
-  AsyncStorage, Alert,
-} from "react-native";
+  Alert,
+} from 'react-native';
 import {
   RichEditor,
   RichToolbar,
   actions,
   getContentCSS,
 } from 'react-native-pell-rich-editor';
+
+import JSON5 from 'json5';
 import {colors, fonts, sizes} from '../../../constant';
-import { useNavigation } from "@react-navigation/core";
-let labels=["Design","Wireframe","UX"]
+import {useNavigation} from '@react-navigation/core';
+import Datastore from 'react-native-local-mongodb';
+import {useDispatch, useSelector} from 'react-redux';
+import {setNewNote} from '../../../dataStore/redux/action/actions';
+
+let db = new Datastore({
+  filename: 'test4',
+  storage: AsyncStorage,
+  autoload: true,
+});
+
+let labels = ['Design', 'Wireframe', 'UX'];
+const bg_colors = [ '#fff6e7' , '#eff5fb' , '#e4ffe6']
+
+
 
 function NewNote() {
+  let mainColor=Math.floor(Math.random() * bg_colors.length)
+
+  //Date settings
+
+
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  let mm = today.getMonth() + 1; // Months start at 0!
+  let dd = today.getDate();
+
+  if (dd < 10) dd = '0' + dd;
+  if (mm < 10) mm = '0' + mm;
+
+  const todayDate = dd + '/' + mm + '/' + yyyy;
+
+
+  //Date settings end
+
   const [richtext, setRichtext] = React.useState('');
-  const [note, setNote] = React.useState('');
-  const [title,setTitle]=React.useState("hELLO")
+  const [noteContent, setNote] = React.useState('');
+  const [title, setTitle] = React.useState('');
   const editorRef = useRef(null);
-  const [showAlert,setShowAlert]=React.useState(false)
+  const [showAlert, setShowAlert] = React.useState(false);
   const theme = useColorScheme();
-  const navigation = useNavigation()
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const {note} = useSelector(state => state);
 
   const style = styles;
 
-  const alertContent=()=>{
+  const alertContent = () => {
     return (
       <View>
         <View>
-          <View style={{display:'flex',flexDirection:'row',justifyContent:'center'}}>{labels.map((item,i)=>{
-            return (<View style={{display:'flex',flexDirection:'row',justifyContent:'center',alignItems
-            :"center"}}>
-              <CheckBox  checkedIcon='dot-circle-o'
-                         uncheckedIcon='circle-o'  checked={ true} size={20} />
-              <Text style={{marginLeft:-15}}> {item}</Text>
-            </View>)
-          })}</View>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+            }}>
+            {labels.map((item, i) => {
+              return (
+                <View
+                  key={i}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <CheckBox
+                    checkedIcon="dot-circle-o"
+                    uncheckedIcon="circle-o"
+                    checked={true}
+                    size={20}
+                  />
+                  <Text style={{marginLeft: -15}}> {item}</Text>
+                </View>
+              );
+            })}
+          </View>
         </View>
       </View>
-    )
-  }
+    );
+  };
 
-  let saveNote = async () => {
-    if(title.length>0){
-      console.log(note)
-      console.log(title)
-      await AsyncStorage.setItem(title,note,(e)=>{
-        console.log(e,"error")
-      })
-      console.log(await AsyncStorage.getItem(title),"result");
-      navigation.navigate("Home")
-    }else{
-      Alert.alert('','You cannot save a note without a title')
+  let saveNote = () => {
+    if (title.length > 0) {
+      try {
+        dispatch(
+          setNewNote({
+            note: noteContent,
+            title: title,
+            label: 'Design | Wireframe',
+            data_modified: todayDate,
+            bg_color: bg_colors[mainColor],
+          }),
+        );
+
+        navigation.navigate('Home');
+      } catch (e) {
+        // saving error
+        alert.alert('', 'You note was not saved!');
+      }
+    } else {
+      Alert.alert('', 'You cannot save a note without a title');
     }
   };
   let handleChange = useCallback(html => {
@@ -113,9 +178,11 @@ function NewNote() {
             flexDirection: 'row',
             alignItems: 'center',
           }}>
-          <TouchableOpacity onPress={()=>{
-            navigation.navigate("Home")
-          }} activeOpacity={0.8}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Home');
+            }}
+            activeOpacity={0.8}>
             <Icon
               color={theme == 'dark' ? colors.mega : colors.tertiary}
               name="close-circle-outline"
@@ -173,9 +240,11 @@ function NewNote() {
           </View>
           <View>
             {/*  View to edit labels*/}
-            <TouchableOpacity onPress={()=>{
-              setShowAlert(true)
-            }} activeOpacity={0.8}>
+            <TouchableOpacity
+              onPress={() => {
+                setShowAlert(true);
+              }}
+              activeOpacity={0.8}>
               <Text
                 style={{
                   color: theme == 'dark' ? colors.primary : colors.tertiary,
@@ -187,21 +256,18 @@ function NewNote() {
           </View>
         </View>
         <AwesomeAlert
-        show={showAlert}
-
-        closeOnTouchOutside={false}
-        closeOnHardwareBackPress={false}
-        showCancelButton={true}
-        showConfirmButton={true}
-        onCancelPressed={()=>{
-          setShowAlert(false)
-        }}
-        onConfirmPressed={()=>{
-          setShowAlert(false)
-        }}
-
-        customView={alertContent()}
-
+          show={showAlert}
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={false}
+          showCancelButton={true}
+          showConfirmButton={true}
+          onCancelPressed={() => {
+            setShowAlert(false);
+          }}
+          onConfirmPressed={() => {
+            setShowAlert(false);
+          }}
+          customView={alertContent()}
         />
 
         <ScrollView
@@ -226,7 +292,7 @@ function NewNote() {
               onMessage={handleMessage}
               onFocus={handleFocus}
               onBlur={handleBlur}
-              initialContentHTML={note}
+              initialContentHTML={noteContent}
             />
           </View>
         </ScrollView>

@@ -16,11 +16,12 @@ NewNote
 
 import Home from './screens/Home/HomeScreen/HomeScreen';
 
-
+import {Provider } from 'react-redux'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Icon } from '@rneui/base';
 import { colors } from './constant';
 import { NewNote } from './screens/Note';
+import { Store } from "./dataStore/redux/store";
 
 
 
@@ -54,13 +55,15 @@ const Stack = createNativeStackNavigator();
 
 function App() {
   return (
+  <Provider store={Store}>
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown:false}}>
         <Stack.Screen name="HomeScreen" component={MyTabs} />
         <Stack.Screen name="NewNote" component={NewNote} />
-      
+
       </Stack.Navigator>
     </NavigationContainer>
+  </Provider>
   );
 }
 
