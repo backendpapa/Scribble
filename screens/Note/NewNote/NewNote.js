@@ -35,8 +35,29 @@ let db = new Datastore({
 });
 
 let labels = ['Design', 'Wireframe', 'UX'];
+const bg_colors = [ '#fff6e7' , '#eff5fb' , '#e4ffe6']
+
+
 
 function NewNote() {
+  let mainColor=Math.floor(Math.random() * bg_colors.length)
+
+  //Date settings
+
+
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  let mm = today.getMonth() + 1; // Months start at 0!
+  let dd = today.getDate();
+
+  if (dd < 10) dd = '0' + dd;
+  if (mm < 10) mm = '0' + mm;
+
+  const todayDate = dd + '/' + mm + '/' + yyyy;
+
+
+  //Date settings end
+
   const [richtext, setRichtext] = React.useState('');
   const [noteContent, setNote] = React.useState('');
   const [title, setTitle] = React.useState('');
@@ -93,8 +114,8 @@ function NewNote() {
             note: noteContent,
             title: title,
             label: 'Design | Wireframe',
-            data_modified: '2022/04/30',
-            bg_color: '#fff6e7' || '#eff5fb' || '#e4ffe6',
+            data_modified: todayDate,
+            bg_color: bg_colors[mainColor],
           }),
         );
 

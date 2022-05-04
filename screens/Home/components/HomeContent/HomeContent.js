@@ -7,7 +7,7 @@ import {CardNote} from '../index';
 function HomeContent(props) {
   const [mainNote, setmainNote] = useState(props.notes.notearray);
   const [loading, setLoading] = useState(true);
-  console.log(props.notes.notearray,'props');
+
   useEffect(() => {
 
     setLoading(false);
@@ -26,7 +26,7 @@ function HomeContent(props) {
                   key={i}
                   label={item.label}
                   title={item.title}
-                  content={item.content}
+                  note={item.note}
                   bg={item.bg_color}
                   date={item.data_modified}
                 />

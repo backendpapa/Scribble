@@ -32,7 +32,9 @@ function Home() {
   const [notearray, setNoteArray] = useState(note.notes);
 
   useEffect(() => {
-    if (loading == true && notearray.length == 0) {
+
+    if (loading == true && notearray.length==1) {
+
       db.find({}, function (err, res) {
         console.log(res);
 
@@ -42,6 +44,7 @@ function Home() {
         setLoading(false);
       });
     } else {
+
       setNoteArray(note.notes);
       setLoading(false);
     }
