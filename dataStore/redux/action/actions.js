@@ -9,7 +9,7 @@ export const setNewNote = note => dispatch => {
 };
 
 export const getAllNotes = notes => dispatch => {
-  console.log(notes, 'note incoming');
+
   dispatch({
     type: GET_ALL_NOTE,
     payload: notes,

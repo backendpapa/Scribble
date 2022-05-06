@@ -1,9 +1,10 @@
 import {CheckBox, Icon} from '@rneui/base';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, {useRef, useCallback} from 'react';
+import React, {useRef, useCallback, useEffect} from 'react';
 import uuid from 'react-native-uuid';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import {addNote, loadNotes, notesDB} from '../../../dataStore/Config';
+import {db} from '../../../dataStore/Config';
+
 import {
   View,
   Text,
@@ -27,48 +28,54 @@ import {useNavigation} from '@react-navigation/core';
 import Datastore from 'react-native-local-mongodb';
 import {useDispatch, useSelector} from 'react-redux';
 import {setNewNote} from '../../../dataStore/redux/action/actions';
-
-let db = new Datastore({
-  filename: 'test4',
-  storage: AsyncStorage,
-  autoload: true,
-});
+import {useRoute} from '@react-navigation/native';
+import {setDisabled} from 'react-native/Libraries/LogBox/Data/LogBoxData';
 
 let labels = ['Design', 'Wireframe', 'UX'];
-const bg_colors = [ '#fff6e7' , '#eff5fb' , '#e4ffe6']
-
-
+const bg_colors = ['#fff6e7', '#eff5fb', '#e4ffe6'];
 
 function NewNote() {
-  let mainColor=Math.floor(Math.random() * bg_colors.length)
+  let mainColor = Math.floor(Math.random() * bg_colors.length);
 
   //Date settings
-
 
   const today = new Date();
   const yyyy = today.getFullYear();
   let mm = today.getMonth() + 1; // Months start at 0!
   let dd = today.getDate();
 
-  if (dd < 10) dd = '0' + dd;
-  if (mm < 10) mm = '0' + mm;
+  if (dd < 10) {
+    dd = '0' + dd;
+  }
+  if (mm < 10) {
+    mm = '0' + mm;
+  }
 
   const todayDate = dd + '/' + mm + '/' + yyyy;
-
 
   //Date settings end
 
   const [richtext, setRichtext] = React.useState('');
   const [noteContent, setNote] = React.useState('');
   const [title, setTitle] = React.useState('');
+  const [idisable, setDisable] = React.useState(false);
   const editorRef = useRef(null);
   const [showAlert, setShowAlert] = React.useState(false);
   const theme = useColorScheme();
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const {note} = useSelector(state => state);
-
+  const {Mnote, existing} = useRoute().params;
   const style = styles;
+  useEffect(() => {
+    console.log(Mnote);
+    if (existing == true) {
+      console.log(Mnote);
+      setTitle(Mnote.title);
+      setNote(Mnote.note);
+      setDisable(true);
+    }
+  }, []);
 
   const alertContent = () => {
     return (
@@ -109,17 +116,27 @@ function NewNote() {
   let saveNote = () => {
     if (title.length > 0) {
       try {
-        dispatch(
-          setNewNote({
+        db.insert(
+          {
             note: noteContent,
             title: title,
             label: 'Design | Wireframe',
             data_modified: todayDate,
             bg_color: bg_colors[mainColor],
-          }),
+          },
+          function (err, res) {
+            console.log('pushed');
+          },
         );
 
-        navigation.navigate('Home');
+        db.findOne({title: title}, function (err, doc) {
+          console.log(doc, 'doc in new note');
+          dispatch(setNewNote(doc));
+          console.log('moving')
+          navigation.navigate('Home');
+        });
+
+
       } catch (e) {
         // saving error
         alert.alert('', 'You note was not saved!');
@@ -282,7 +299,7 @@ function NewNote() {
                 caretColor: colors.tertiary,
                 color: theme == 'dark' ? colors.mega : colors.tertiary,
               }}
-              disabled={false}
+              disabled={idisable}
               useContainer={false}
               onChange={handleChange}
               onPaste={handlePaste}

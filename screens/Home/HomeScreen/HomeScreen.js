@@ -32,20 +32,24 @@ function Home() {
   const [notearray, setNoteArray] = useState(note.notes);
 
   useEffect(() => {
+    if (loading == true && notearray.length == 1) {
+      db.find({})
+        .sort({updatedAt: -1})
+        .exec(function (err, res) {
+          dispatch(getAllNotes(res));
 
-    if (loading == true && notearray.length==1) {
-
-      db.find({}, function (err, res) {
-        console.log(res);
-
-        dispatch(getAllNotes(res));
-
-        setNoteArray(oldn => [...res]);
-        setLoading(false);
-      });
+          setNoteArray(oldn => [...res]);
+          setLoading(false);
+        });
     } else {
+      console.log('coming from notes');
 
-      setNoteArray(note.notes);
+
+
+      console.log('sorting');
+      setNoteArray(note.notes.sort((a,b)=>{return b.updatedAt - a.updatedAt}));
+      console.log(notearray,"noteing");
+      console.log('sorted');
       setLoading(false);
     }
   });
@@ -66,16 +70,16 @@ function Home() {
           <HomeTab />
         </View>
         <View style={{marginTop: 10, height: '100%'}}>
-          {loading == false ? ( <HomeContent notes={{notearray}} />
-          ) : (
-            <View></View>
-          )}
+          {loading == false ? <HomeContent notes={{notearray}} /> : <View />}
         </View>
       </View>
       <View style={{position: 'absolute', right: 20, bottom: 90}}>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('NewNote');
+            navigation.navigate('NewNote', {
+              existing: false,
+              Mnote: {},
+            });
           }}
           style={[
             style.new_note_button,
