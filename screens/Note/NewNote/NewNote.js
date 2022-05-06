@@ -27,7 +27,10 @@ import {colors, fonts, sizes} from '../../../constant';
 import {useNavigation} from '@react-navigation/core';
 import Datastore from 'react-native-local-mongodb';
 import {useDispatch, useSelector} from 'react-redux';
-import {setNewNote} from '../../../dataStore/redux/action/actions';
+import {
+  setNewNote,
+  updateExistingNote,
+} from '../../../dataStore/redux/action/actions';
 import {useRoute} from '@react-navigation/native';
 import {setDisabled} from 'react-native/Libraries/LogBox/Data/LogBoxData';
 
@@ -115,34 +118,68 @@ function NewNote() {
 
   let saveNote = () => {
     if (title.length > 0) {
-      try {
-        db.insert(
-          {
-            note: noteContent,
-            title: title,
-            label: 'Design | Wireframe',
-            data_modified: todayDate,
-            bg_color: bg_colors[mainColor],
-          },
-          function (err, res) {
-            console.log('pushed');
-          },
-        );
-
-        db.findOne({title: title}, function (err, doc) {
-          console.log(doc, 'doc in new note');
-          dispatch(setNewNote(doc));
-          console.log('moving')
-          navigation.navigate('Home');
-        });
-
-
-      } catch (e) {
-        // saving error
-        alert.alert('', 'You note was not saved!');
+      if (existing == false) {
+        saveNew();
+      } else {
+        saveExisting();
       }
+      navigation.navigate('Home',{loading:true});
     } else {
       Alert.alert('', 'You cannot save a note without a title');
+    }
+  };
+  let saveExisting = () => {
+    try {
+
+      db.update(
+        {_id: Mnote.id},
+        {
+          note: noteContent,
+          title: title,
+          label: 'Design | Wireframe',
+          data_modified: todayDate,
+          bg_color: bg_colors[mainColor],
+        },
+        function (err, res) {
+          console.log('done');
+        },
+      );
+      console.log('mission done')
+
+      db.find({}, function (err, doc) {
+        console.log(doc, 'all doc in  notes');
+        dispatch(updateExistingNote(doc));
+        console.log('updating');
+      });
+    } catch (e) {
+      // saving error
+      alert.alert('', 'You note was not saved!');
+    }
+  };
+
+  let saveNew = () => {
+    try {
+      db.insert(
+        {
+          note: noteContent,
+          title: title,
+          label: 'Design | Wireframe',
+          data_modified: todayDate,
+          bg_color: bg_colors[mainColor],
+        },
+        function (err, res) {
+
+        },
+      );
+
+      db.findOne({title: title}, function (err, doc) {
+
+        dispatch(setNewNote(doc));
+
+      });
+    } catch (e) {
+      // saving error
+      alert.alert('', 'You note was not saved!');
     }
   };
   let handleChange = useCallback(html => {
@@ -214,13 +251,36 @@ function NewNote() {
             }}>
             Edit Note
           </Text>
-          <TouchableOpacity onPress={saveNote} activeOpacity={0.8}>
-            <Icon
-              color={theme == 'dark' ? colors.mega : colors.tertiary}
-              name="md-checkmark-circle-outline"
-              type="ionicon"
-            />
-          </TouchableOpacity>
+          {idisable === true ? (
+
+
+              <TouchableOpacity onPress={()=>{
+                setDisable(false)
+              }} activeOpacity={0.8}>
+                <Text>
+
+                  <Icon
+                    color={theme == 'dark' ? colors.mega : colors.tertiary}
+                    name="circle-edit-outline"
+                    type="material-community"
+                  />
+                </Text>
+              </TouchableOpacity>
+
+          ) : (
+
+
+              <TouchableOpacity onPress={saveNote} activeOpacity={0.8}>
+                <Text>
+                  <Icon
+                    color={theme == 'dark' ? colors.mega : colors.tertiary}
+                    name="md-checkmark-circle-outline"
+                    type="ionicon"
+                  />
+                </Text>
+              </TouchableOpacity>
+
+          )}
         </View>
         <TextInput
           style={{
@@ -293,7 +353,7 @@ function NewNote() {
           <View style={style.container}>
             <RichEditor
               ref={editorRef}
-              typ
+
               editorStyle={{
                 backgroundColor: 'transparent',
                 caretColor: colors.tertiary,

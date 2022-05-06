@@ -29,6 +29,10 @@ function HomeContent(props) {
                   note={item.note}
                   bg={item.bg_color}
                   date={item.data_modified}
+                  updated={item.updatedAt}
+                  created={item.createdAt}
+                  id={item._id}
+
                 />
               );
             })}

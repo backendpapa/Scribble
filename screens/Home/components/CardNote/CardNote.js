@@ -28,6 +28,7 @@ function CardNote(props){
     return (
         <View>
            <TouchableOpacity onPress={()=>{
+
              navigation.navigate('NewNote',{
                existing: true,
                Mnote: item

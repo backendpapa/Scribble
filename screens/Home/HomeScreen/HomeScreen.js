@@ -31,7 +31,9 @@ function Home() {
   const dispatch = useDispatch();
   const [notearray, setNoteArray] = useState(note.notes);
 
+
   useEffect(() => {
+
     if (loading == true && notearray.length == 1) {
       db.find({})
         .sort({updatedAt: -1})
@@ -54,6 +56,8 @@ function Home() {
     }
   });
 
+
+
   return (
     <View>
       <StatusBar
@@ -70,7 +74,27 @@ function Home() {
           <HomeTab />
         </View>
         <View style={{marginTop: 10, height: '100%'}}>
-          {loading == false ? <HomeContent notes={{notearray}} /> : <View />}
+          {loading == false ? <View
+            style={{height: '84%', display: 'flex', justifyContent: 'center'}}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {notearray.map((item, i) => {
+                return (
+                  <CardNote
+                    key={i}
+                    label={item.label}
+                    title={item.title}
+                    note={item.note}
+                    bg={item.bg_color}
+                    date={item.data_modified}
+                    updated={item.updatedAt}
+                    created={item.createdAt}
+                    id={item._id}
+
+                  />
+                );
+              })}
+            </ScrollView>
+          </View> : <View />}
         </View>
       </View>
       <View style={{position: 'absolute', right: 20, bottom: 90}}>
