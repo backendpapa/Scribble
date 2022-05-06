@@ -20,7 +20,7 @@ function CardNote(props){
   })
   const loadItem=()=>{
     setitem(props)
-   
+
   }
     return (
         <View>
