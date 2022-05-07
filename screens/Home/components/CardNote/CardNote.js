@@ -70,6 +70,9 @@ const styles=StyleSheet.create({
         fontFamily:fonts.DmSans_Regular,
         fontSize:sizes.h15,
         marginTop:10,
+      height:90,
+      overflow:'hidden',
+      
 
     },
     label_text:{
