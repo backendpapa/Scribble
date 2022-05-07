@@ -6,12 +6,12 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React,{useEffect} from 'react';
 
 import { View, Text,useColorScheme } from 'react-native';
 import { NavigationContainer} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-NewNote
+import SplashScreen from 'react-native-splash-screen'
 // Screens
 
 import Home from './screens/Home/HomeScreen/HomeScreen';
@@ -54,6 +54,11 @@ function MyTabs() {
 const Stack = createNativeStackNavigator();
 
 function App() {
+  useEffect(()=>{
+    setTimeout(()=>{
+      SplashScreen.hide()
+    },2000)
+  })
   return (
   <Provider store={Store}>
     <NavigationContainer>

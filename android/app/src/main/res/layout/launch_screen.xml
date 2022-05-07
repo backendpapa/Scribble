@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical" android:background="#000000"  android:layout_width="match_parent"  android:gravity="center"
+              android:layout_height="match_parent">
+   <LinearLayout android:orientation="vertical" android:layout_margin="20dp" android:layout_height="wrap_content"  android:gravity="center"  android:layout_width="wrap_content">
+       <ImageView   android:layout_width="100dp"   android:layout_height="100dp" android:src="@drawable/edit" android:scaleType="centerCrop" />
+        <TextView android:text="Scribble." android:fontFamily="@font/dmsansbold" android:textColor="#ffffff" android:layout_width="wrap_content" android:textSize="40sp" android:layout_height="wrap_content" ></TextView>
+       <TextView android:gravity="center_horizontal" android:layout_marginLeft="40dp" android:layout_marginRight="40dp" android:text="Easily Manage Your Notes On Your phone and You Can Hav Infinite Notes." android:textSize="15sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/dmsansregular" android:textColor="#808080"></TextView>
+   </LinearLayout>
+</LinearLayout>
