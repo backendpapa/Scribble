@@ -61,7 +61,7 @@ function NewNote() {
   const [richtext, setRichtext] = React.useState('');
   const [noteContent, setNote] = React.useState('');
   const [title, setTitle] = React.useState('');
-  const [idisable, setDisable] = React.useState(false);
+  const [idisable, setDisable] = React.useState(true);
   const editorRef = useRef(null);
   const [showAlert, setShowAlert] = React.useState(false);
   const theme = useColorScheme();
@@ -77,6 +77,8 @@ function NewNote() {
       setTitle(Mnote.title);
       setNote(Mnote.note);
       setDisable(true);
+    } else {
+      setDisable(false);
     }
   }, []);
 
@@ -123,14 +125,13 @@ function NewNote() {
       } else {
         saveExisting();
       }
-      navigation.navigate('Home',{loading:true});
+      navigation.navigate('Home', {loading: true});
     } else {
       Alert.alert('', 'You cannot save a note without a title');
     }
   };
   let saveExisting = () => {
     try {
-
       db.update(
         {_id: Mnote.id},
         {
@@ -144,7 +145,7 @@ function NewNote() {
           console.log('done');
         },
       );
-      console.log('mission done')
+      console.log('mission done');
 
       db.find({}, function (err, doc) {
         console.log(doc, 'all doc in  notes');
@@ -167,15 +168,11 @@ function NewNote() {
           data_modified: todayDate,
           bg_color: bg_colors[mainColor],
         },
-        function (err, res) {
-
-        },
+        function (err, res) {},
       );
 
       db.findOne({title: title}, function (err, doc) {
-
         dispatch(setNewNote(doc));
-
       });
     } catch (e) {
       // saving error
@@ -252,34 +249,29 @@ function NewNote() {
             Edit Note
           </Text>
           {idisable === true ? (
-
-
-              <TouchableOpacity onPress={()=>{
-                setDisable(false)
-              }} activeOpacity={0.8}>
-                <Text>
-
-                  <Icon
-                    color={theme == 'dark' ? colors.mega : colors.tertiary}
-                    name="circle-edit-outline"
-                    type="material-community"
-                  />
-                </Text>
-              </TouchableOpacity>
-
+            <TouchableOpacity
+              onPress={() => {
+                setDisable(false);
+              }}
+              activeOpacity={0.8}>
+              <Text>
+                <Icon
+                  color={theme == 'dark' ? colors.mega : colors.tertiary}
+                  name="circle-edit-outline"
+                  type="material-community"
+                />
+              </Text>
+            </TouchableOpacity>
           ) : (
-
-
-              <TouchableOpacity onPress={saveNote} activeOpacity={0.8}>
-                <Text>
-                  <Icon
-                    color={theme == 'dark' ? colors.mega : colors.tertiary}
-                    name="md-checkmark-circle-outline"
-                    type="ionicon"
-                  />
-                </Text>
-              </TouchableOpacity>
-
+            <TouchableOpacity onPress={saveNote} activeOpacity={0.8}>
+              <Text>
+                <Icon
+                  color={theme == 'dark' ? colors.mega : colors.tertiary}
+                  name="md-checkmark-circle-outline"
+                  type="ionicon"
+                />
+              </Text>
+            </TouchableOpacity>
           )}
         </View>
         <TextInput
@@ -353,7 +345,6 @@ function NewNote() {
           <View style={style.container}>
             <RichEditor
               ref={editorRef}
-
               editorStyle={{
                 backgroundColor: 'transparent',
                 caretColor: colors.tertiary,
@@ -375,32 +366,36 @@ function NewNote() {
         </ScrollView>
       </View>
       <View style={{position: 'absolute', bottom: 10, width: '100%'}}>
-        <RichToolbar
-          selectedIconTint={'#2095F2'}
-          actions={[
-            actions.keyboard,
-            actions.setBold,
-            actions.setItalic,
-            actions.setStrikethrough,
-            actions.setUnderline,
-            actions.insertBulletsList,
-            actions.insertOrderedList,
-            actions.checkboxList,
-            actions.insertImage,
-            actions.redo,
-            actions.undo,
-            actions.insertVideo,
-            actions.insertLink,
-            'customAction',
-          ]}
-          style={{
-            height: 70,
-            margin: 25,
-            borderRadius: 20,
-            backgroundColor: theme == 'dark' ? colors.mega : colors.tertiary,
-          }}
-          editor={editorRef}
-        />
+        {idisable == false ? (
+          <RichToolbar
+            selectedIconTint={'#2095F2'}
+            actions={[
+              actions.keyboard,
+              actions.setBold,
+              actions.setItalic,
+              actions.setStrikethrough,
+              actions.setUnderline,
+              actions.insertBulletsList,
+              actions.insertOrderedList,
+              actions.checkboxList,
+              actions.insertImage,
+              actions.redo,
+              actions.undo,
+              actions.insertVideo,
+              actions.insertLink,
+              'customAction',
+            ]}
+            style={{
+              height: 70,
+              margin: 25,
+              borderRadius: 20,
+              backgroundColor: theme == 'dark' ? colors.mega : colors.tertiary,
+            }}
+            editor={editorRef}
+          />
+        ) : (
+          <View />
+        )}
       </View>
     </View>
   );

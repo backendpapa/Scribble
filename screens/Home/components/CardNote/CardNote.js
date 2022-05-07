@@ -34,7 +34,7 @@ function CardNote(props){
                Mnote: item
              })
            }}  activeOpacity={0.8}>
-           <View style={[style.containerM,{backgroundColor:item.bg,borderRadius:15}]}>
+           <View style={[style.containerM,{backgroundColor:item.bg,borderRadius:15,overflow:'hidden'}]}>
                     <Text style={[style.title_text,{color:colors.tertiary}]}>{item.title}</Text>
                     {props.note==""?(<View></View>):(
                       <RenderHTML baseStyle={style.content_text} contentWidth={width} source={{ html: `${item.note}` }}  />)}
@@ -72,7 +72,7 @@ const styles=StyleSheet.create({
         marginTop:10,
       height:90,
       overflow:'hidden',
-      
+
 
     },
     label_text:{
