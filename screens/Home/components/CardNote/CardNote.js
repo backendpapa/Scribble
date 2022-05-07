@@ -4,12 +4,15 @@ import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions } from "r
 import { colors, fonts, sizes } from "../../../../constant";
 import { useIsFocused } from "@react-navigation/native";
 import RenderHTML from 'react-native-render-html'
+import { useNavigation } from "@react-navigation/core";
+
 
 
 function CardNote(props){
   const isFocused=useIsFocused()
   const [item,setitem]=useState({})
     const style=styles
+  const navigation=useNavigation()
   const { width } = useWindowDimensions();
 
 
@@ -24,8 +27,14 @@ function CardNote(props){
   }
     return (
         <View>
-           <TouchableOpacity  activeOpacity={0.8}>
-           <View style={[style.containerM,{backgroundColor:item.bg,borderRadius:15}]}>
+           <TouchableOpacity onPress={()=>{
+
+             navigation.navigate('NewNote',{
+               existing: true,
+               Mnote: item
+             })
+           }}  activeOpacity={0.8}>
+           <View style={[style.containerM,{backgroundColor:item.bg,borderRadius:15,overflow:'hidden'}]}>
                     <Text style={[style.title_text,{color:colors.tertiary}]}>{item.title}</Text>
                     {props.note==""?(<View></View>):(
                       <RenderHTML baseStyle={style.content_text} contentWidth={width} source={{ html: `${item.note}` }}  />)}
@@ -61,6 +70,9 @@ const styles=StyleSheet.create({
         fontFamily:fonts.DmSans_Regular,
         fontSize:sizes.h15,
         marginTop:10,
+      height:90,
+      overflow:'hidden',
+
 
     },
     label_text:{

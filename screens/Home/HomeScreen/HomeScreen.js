@@ -31,24 +31,32 @@ function Home() {
   const dispatch = useDispatch();
   const [notearray, setNoteArray] = useState(note.notes);
 
+
   useEffect(() => {
 
-    if (loading == true && notearray.length==1) {
+    if (loading == true && notearray.length == 1) {
+      db.find({})
+        .sort({updatedAt: -1})
+        .exec(function (err, res) {
+          dispatch(getAllNotes(res));
 
-      db.find({}, function (err, res) {
-        console.log(res);
-
-        dispatch(getAllNotes(res));
-
-        setNoteArray(oldn => [...res]);
-        setLoading(false);
-      });
+          setNoteArray(oldn => [...res]);
+          setLoading(false);
+        });
     } else {
+      console.log('coming from notes');
 
-      setNoteArray(note.notes);
+
+
+      console.log('sorting');
+      setNoteArray(note.notes.sort((a,b)=>{return b.updatedAt - a.updatedAt}));
+      console.log(notearray,"noteing");
+      console.log('sorted');
       setLoading(false);
     }
   });
+
+
 
   return (
     <View>
@@ -66,16 +74,36 @@ function Home() {
           <HomeTab />
         </View>
         <View style={{marginTop: 10, height: '100%'}}>
-          {loading == false ? ( <HomeContent notes={{notearray}} />
-          ) : (
-            <View></View>
-          )}
+          {loading == false ? <View
+            style={{height: '84%', display: 'flex', justifyContent: 'center'}}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {notearray.map((item, i) => {
+                return (
+                  <CardNote
+                    key={i}
+                    label={item.label}
+                    title={item.title}
+                    note={item.note}
+                    bg={item.bg_color}
+                    date={item.data_modified}
+                    updated={item.updatedAt}
+                    created={item.createdAt}
+                    id={item._id}
+
+                  />
+                );
+              })}
+            </ScrollView>
+          </View> : <View />}
         </View>
       </View>
       <View style={{position: 'absolute', right: 20, bottom: 90}}>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('NewNote');
+            navigation.navigate('NewNote', {
+              existing: false,
+              Mnote: {},
+            });
           }}
           style={[
             style.new_note_button,
